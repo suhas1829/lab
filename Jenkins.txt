@@ -1,0 +1,136 @@
+Jenkins
+1. sudo apt update
+2. curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+3. echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+4. if any error occurs 
+   sudo rm -f /usr/share/keyrings/jenkins-keyring.asc 
+   sudo rm -f /usr/share/keyrings/jenkins-keyring.gpg
+5. sudo apt install Jenkins
+6. sudo systemctl start Jenkins
+7. sudo systemctl status Jenkins
+8. to stop sudo systemctl stop Jenkins
+ To uninstall
+1. sudo apt remove --purge jenkins
+2. sudo rm -rf /var/lib/jenkins
+3. sudo rm -rf /etc/jenkins
+4. sudo rm -rf /var/log/jenkins
+5.sudo rm /etc/apt/sources.list.d/jenkins.list
+6.sudo rm /usr/share/keyrings/jenkins-keyring.asc
+to verify unistalled
+dpkg -l | grep jenkins
+no output removed Jenkins
+
+2nd prog
+pom.xml 
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>MyMavenApp</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+1.mvn archetype:generate -DgroupId=com.example -DartifactId=MyMavenApp -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+2. edit pom file
+3. mvn compile
+4. mvn test
+5. mvn package
+6. mvn clean
+
+6th one
+gradle typescript
+pipeline {
+    agent any
+
+    environment {
+        GRADLE_OPTS = "-Dorg.gradle.daemon=false"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/Panchajanya2105/BGSCET.git', branch: 'main'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Starting Gradle Build...'
+                sh './gradlew build || gradle build'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Build completed successfully.'
+        }
+        failure {
+            echo '❌ Build failed.'
+        }
+    }
+}
+
+maven script
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/Panchajanya2105/BGSCET.git', branch: 'main'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building with Maven...'
+                sh 'mvn clean install'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build completed successfully.'
+        }
+        failure {
+            echo 'Build failed.'
+        }
+    }
+}
